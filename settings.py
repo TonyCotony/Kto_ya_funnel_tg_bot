@@ -10,7 +10,7 @@ os.chdir(sys.path[0])
 class Bots:
     bot_token: str
     post_channel: str
-    you_kassa_token: str
+    paid_token: str
 
 
 @dataclass()
@@ -54,7 +54,7 @@ def get_settings(path: str):
         bots=Bots(
             bot_token=env.str("BOT_TOKEN"),
             post_channel=env.str("POSTING_CHANNEL"),
-            you_kassa_token=env.str("YOUKASSA_TOKEN")
+            paid_token=env.str("PAID_TOKEN")
         ),
         user=User(
             admin_id=env.str("ADMIN_ID"),
