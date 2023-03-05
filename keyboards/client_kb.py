@@ -4,42 +4,42 @@ client_menu_kb = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
             text='Знакомство',
-            callback_query='client_meet'
+            callback_data='client_meet'
         )
     ],
     [
         InlineKeyboardButton(
             text='Музыкальная атмосфера',
-            callback_query='client_music_atmo'
+            callback_data='client_music_atmo'
         )
     ],
     [
         InlineKeyboardButton(
             text='Книга KtoYa',
-            callback_query='client_book'
+            callback_data='client_book'
         )
     ],
     [
         InlineKeyboardButton(
             text='Сериал "Активация Гениальности"',
-            callback_query='client_serial'
+            callback_data='client_serial'
         )
     ],
     [
         InlineKeyboardButton(
             text='Отзывы',
-            callback_query='client_feedback'
+            callback_data='client_feedback'
         ),
 
         InlineKeyboardButton(
             text='Связь со мной',
-            callback_query='client_my_contacts'
+            callback_data='client_my_contacts'
         )
     ],
     [
         InlineKeyboardButton(
             text='Подкасты "Созерцай"',
-            callback_query='client_podcasts'
+            callback_data='client_podcasts'
         )
     ]
 ])

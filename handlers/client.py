@@ -45,12 +45,16 @@ async def main_menu_navigate(call: CallbackQuery, bot: Bot, state: FSMContext):
         if call.data == 'client_meet':
             update_info.add_new_visited_section('Знакомство', call.from_user.id)
             # Возможно сделать отправку видео, через базу
-            await bot.edit_message_text('https://youtube.com/watch?v=zV7lrWumc7U&si=EnSIkaIECMiOmarE \n'
-                                        'Тут есессно надо либо отправлять видео(в чем я не уверен), либо ютубчик ссылку',
-                                        reply_markup=client_back_kb)
-            await call.message.answer('https://youtube.com/watch?v=zV7lrWumc7U&si=EnSIkaIECMiOmarE \n'
-                                      'Тут есессно надо либо отправлять видео(в чем я не уверен), либо ютубчик ссылку',
-                                      reply_markup=client_back_kb)
+            await call.message.edit_text('https://youtube.com/watch?v=zV7lrWumc7U&si=EnSIkaIECMiOmarE \n'
+                                         'Тут есессно надо либо отправлять видео(в чем я не уверен), либо ютубчик ссылку',
+                                         reply_markup=client_back_kb)
+
+            # await bot.edit_message_text('https://youtube.com/watch?v=zV7lrWumc7U&si=EnSIkaIECMiOmarE \n'
+            #                             'Тут есессно надо либо отправлять видео(в чем я не уверен), либо ютубчик ссылку',
+            #                             reply_markup=client_back_kb)
+            # await call.message.answer('https://youtube.com/watch?v=zV7lrWumc7U&si=EnSIkaIECMiOmarE \n'
+            #                           'Тут есессно надо либо отправлять видео(в чем я не уверен), либо ютубчик ссылку',
+            #                           reply_markup=client_back_kb)
         elif call.data == 'client_music_atmo':
             update_info.add_new_visited_section('Музыка', call.from_user.id)
             await call.message.edit_text('Приветствую тебя в этом разделе\n☀🎧 Здесь ты найдешь более 1.300 Треков и '
@@ -85,11 +89,14 @@ async def main_menu_navigate(call: CallbackQuery, bot: Bot, state: FSMContext):
         elif call.data == 'client_serial':
             update_info.add_new_visited_section('Сериал', call.from_user.id)
             # доделать
-            await call.message.answer('https://www.youtube.com/watch?v=da9v6PCm7Y8&ab_channel=%D0%9F%D0%BE%D0%B3'
-                                      '%D0%BD%D0%B0%D0%BB%D0%B8%21 \n'
-                                      'Добро пожаловать в сериал.\n\nЗдесь Ты узнаешь:')
-            await asyncio.sleep(10)
-            await call.message.edit_text('Уже посмотрел трейлер и хочешь узнать что дальше?',
+            # await call.message.answer('https://www.youtube.com/watch?v=da9v6PCm7Y8&ab_channel=%D0%9F%D0%BE%D0%B3'
+            #                           '%D0%BD%D0%B0%D0%BB%D0%B8%21 \n'
+            #                           'Добро пожаловать в сериал.\n\nЗдесь Ты узнаешь:')
+            # await asyncio.sleep(10)
+            await call.message.edit_text('https://www.youtube.com/watch?v=da9v6PCm7Y8&ab_channel=%D0%9F%D0%BE%D0%B3'
+                                         '%D0%BD%D0%B0%D0%BB%D0%B8%21 \n'
+                                         'Добро пожаловать в сериал.\n\nЗдесь Ты узнаешь:'
+                                         'Уже посмотрел трейлер и хочешь узнать что дальше?',
                                          reply_markup=serials_kb)
 
         elif call.data == 'client_feedback':
@@ -208,6 +215,8 @@ async def serial_successful_payment(message: Message, bot: Bot, state: FSMContex
           f'я буду отправлять тебе видео по очереди(мб тебе откроется доп пункт меню или просто ссылка на ютьюб ' \
           f'по ссылке)'
     print(serial_successful_payment)
+    update_buy = DBActions()
+    update_buy.serial_buy(message.from_user.id)
 
     await state.clear()
     await message.answer(msg)
@@ -283,6 +292,8 @@ async def shadow_successful_payment(message: Message, bot: Bot, state: FSMContex
           f'я буду отправлять тебе подкасты по очереди(мб тебе откроется доп пункт меню или просто ссылка на ютьюб ' \
           f'по ссылке)\nВот еще ссылка на закрытый канал: ссылка'
     print(serial_successful_payment)
+    update_buy = DBActions()
+    update_buy.shadow_buy(message.from_user.id)
 
     await state.clear()
     await message.answer(msg)
@@ -358,7 +369,8 @@ async def siddhi_successful_payment(message: Message, bot: Bot, state: FSMContex
           f'я буду отправлять тебе подкасты по очереди(мб тебе откроется доп пункт меню или просто ссылка на ютьюб ' \
           f'по ссылке)\nВот еще ссылка на закрытый канал: ссылка'
     print(serial_successful_payment)
-
+    update_buy = DBActions()
+    update_buy.siddhi_buy(message.from_user.id)
     await state.clear()
     await message.answer(msg)
     await bot.send_message(settings.user.admin_id, f'payment for {message.successful_payment.total_amount // 100} '
@@ -377,4 +389,5 @@ def register_handlers_client(dp: Dispatcher):
     dp.callback_query.register(main_menu_navigate, state=Funnel.main_change)
     dp.message.register(save_feedback, state=Funnel.get_feedback)
     dp.pre_checkout_query.register(serial_pre_buy_checkout_query, state=Funnel.serial_buy)
-    dp.message.register(serial_successful_payment, content_types=[ContentType.SUCCESSFUL_PAYMENT], state=Funnel.serial_buy)
+    dp.message.register(serial_successful_payment, content_types=[ContentType.SUCCESSFUL_PAYMENT],
+                        state=Funnel.serial_buy)

@@ -1,3 +1,5 @@
+import datetime
+
 from aiogram.types import Message
 from psycopg2 import errors
 from sqlalchemy.exc import IntegrityError
@@ -26,10 +28,31 @@ class DBActions:
 
     def add_new_visited_section(self, new_section: str, tg_id: int):
         update_user = self.session.query(Users).filter_by(tg_id=tg_id).first()
-        update_user.visited_sections = update_user.visited_sections + ';' + new_section
+        try:
+            update_user.visited_sections = update_user.visited_sections + ';' + new_section
+        except TypeError:
+            update_user.visited_sections = new_section
         self.session.commit()
         self.session.close()
 
     def get_contacts(self):
         contacts = self.session.query(BotsData.contacts).first()
         return contacts
+
+    def shadow_buy(self, tg_id):
+        user = self.session.query(Users).filter_by(tg_id=tg_id).first()
+        user.podcast_shadows_n_gifts_purchase_date = datetime.datetime.now()
+        self.session.commit()
+        self.session.close()
+
+    def siddhi_buy(self, tg_id):
+        user = self.session.query(Users).filter_by(tg_id=tg_id).first()
+        user.podcasts_siddhi = datetime.datetime.now()
+        self.session.commit()
+        self.session.close()
+
+    def serial_buy(self, tg_id):
+        user = self.session.query(Users).filter_by(tg_id=tg_id).first()
+        user.serial_purchased_date = datetime.datetime.now()
+        self.session.commit()
+        self.session.close()
